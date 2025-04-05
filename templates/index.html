@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <title>Análise de Convenção Coletiva</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f1f1f1 url("/static/background.jpg") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.9);
+      max-width: 800px;
+      margin: 60px auto;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    h1 {
+      color: #1a3960;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    form {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    input[type="file"] {
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #1a3960;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0e2747;
+    }
+
+    .resultado, .erro {
+      background-color: #fff;
+      padding: 20px;
+      border-left: 5px solid #1a3960;
+      margin-top: 20px;
+      white-space: pre-wrap;
+    }
+
+    .erro {
+      border-color: #d9534f;
+      color: #d9534f;
+    }
+
+    .download-link {
+      display: block;
+      margin-top: 15px;
+      text-align: right;
+    }
+
+    .download-link a {
+      color: #1a3960;
+      text-decoration: none;
+    }
+
+    .download-link a:hover {
+      text-decoration: underline;
+    }
+
+    #loader-container {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .progress-bar {
+      width: 100%;
+      background-color: #ddd;
+      border-radius: 10px;
+      overflow: hidden;
+      height: 20px;
+      margin-top: 10px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background-color: #1a3960;
+      transition: width 0.4s ease-in-out;
+    }
+
+    .step-message {
+      margin-top: 15px;
+      font-weight: bold;
+      color: #1a3960;
+    }
+  </style>
+
+  <script>
+    function mostrarLoader() {
+      const btn = document.querySelector("button");
+      btn.disabled = true;
+      btn.innerText = "Processando...";
+
+      const loader = document.getElementById("loader-container");
+      loader.style.display = "block";
+
+      const progressBar = document.querySelector(".progress-bar-fill");
+      const stepMsg = document.getElementById("step-message");
+
+      let steps = [
+        { percent: 20, message: "📄 Lendo o PDF..." },
+        { percent: 45, message: "✂️ Dividindo em blocos..." },
+        { percent: 70, message: "🧠 Enviando para IA..." },
+        { percent: 90, message: "📦 Montando resposta final..." },
+        { percent: 100, message: "✅ Concluído! Exibindo resultados..." }
+      ];
+
+      let i = 0;
+
+      function updateProgress() {
+        if (i < steps.length) {
+          progressBar.style.width = steps[i].percent + "%";
+          stepMsg.innerText = steps[i].message;
+          i++;
+          setTimeout(updateProgress, 1200);
+        }
+      }
+
+      updateProgress();
+    }
+  </script>
+</head>
+<body>
+  <div class="container">
+    <h1>Análise de Convenção Coletiva com IA</h1>
+    <form method="POST" enctype="multipart/form-data" onsubmit="mostrarLoader()">
+      <input type="file" name="pdf_file" accept="application/pdf" required />
+      <br />
+      <button type="submit">Enviar para Análise</button>
+    </form>
+
+    <div id="loader-container">
+      <div class="progress-bar">
+        <div class="progress-bar-fill"></div>
+      </div>
+      <div class="step-message" id="step-message">Iniciando...</div>
+    </div>
+
+    {% if erro %}
+      <div class="erro">{{ erro }}</div>
+    {% endif %}
+
+    {% if resultado %}
+      <div class="resultado">{{ resultado }}</div>
+      <div class="download-link">
+        <a href="/download">📥 Baixar texto extraído</a>
+      </div>
+    {% endif %}
+  </div>
+</body>
+</html>
