@@ -1,5 +1,5 @@
 Flask==2.3.3
-openai==1.10.0
+openai==0.28
 PyMuPDF==1.23.16
 gunicorn
 python-dotenv
